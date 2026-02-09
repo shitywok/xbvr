@@ -48,6 +48,16 @@ const state = {
     show: false,
     actor: null
   },
+  fileRename: {
+    show: false,
+    file: null,
+    preview: null
+  },
+  batchRename: {
+    show: false,
+    fileIds: [],
+    previews: []
+  },
   changeDetailsTab: -1,
 }
 
@@ -162,6 +172,26 @@ const mutations = {
   },
   changeDetailsTab (state, payload) {
     state.changeDetailsTab = payload.tab
+  },
+  showFileRename (state, payload) {
+    state.fileRename.file = payload.file
+    state.fileRename.preview = payload.preview || null
+    state.fileRename.show = true
+  },
+  hideFileRename (state) {
+    state.fileRename.file = null
+    state.fileRename.preview = null
+    state.fileRename.show = false
+  },
+  showBatchRename (state, payload) {
+    state.batchRename.fileIds = payload.fileIds
+    state.batchRename.previews = payload.previews || []
+    state.batchRename.show = true
+  },
+  hideBatchRename (state) {
+    state.batchRename.fileIds = []
+    state.batchRename.previews = []
+    state.batchRename.show = false
   },
 }
 

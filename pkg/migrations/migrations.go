@@ -2379,6 +2379,12 @@ func Migrate(migrateTo string) {
 				return nil
 			},
 		},
+		{
+			ID: "0087-add-file-renamed-at",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&models.File{}).Error
+			},
+		},
 	}
 
 	// Wrap migrations to automatically track progress

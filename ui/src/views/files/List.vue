@@ -3,9 +3,21 @@
     <div class="columns">
       <div class="column">
         <b-loading :is-full-page="true" :active.sync="isLoading"></b-loading>
+
+        <!-- Batch actions bar -->
+        <div v-if="selectedFiles.length > 0" class="batch-actions-bar">
+          <span class="selected-count">{{ selectedFiles.length }} {{ $t('selected') }}</span>
+          <b-button type="is-light" size="is-small" @click="clearSelection">
+            {{ $t('Clear selection') }}
+          </b-button>
+        </div>
+
         <div v-if="items.length > 0 && !isLoading">
           <b-table :data="items" ref="table" backend-sorting :default-sort="[sortField, sortOrder]" @sort="onSort"
-                   :paginated="true">
+                   :paginated="true"
+                   :checked-rows.sync="selectedFiles"
+                   checkable
+                   :header-checkable="true">
             <b-table-column style="word-break:break-all;" class="is-one-fifth" field="filename" :label="$t('File')"
                             sortable v-slot="props">
               {{ props.row.filename }}
@@ -102,6 +114,14 @@ export default {
     },
     items () {
       return this.$store.state.files.items
+    },
+    selectedFiles: {
+      get () {
+        return this.$store.state.files.selectedFiles
+      },
+      set (value) {
+        this.$store.commit('files/setSelectedFiles', value)
+      }
     }
   },
   mounted () {
@@ -132,6 +152,9 @@ export default {
     },
     createScene (file) {
       this.$store.commit('overlay/createCustomScene', { file: file })
+    },
+    clearSelection () {
+      this.$store.commit('files/clearSelectedFiles')
     },
     humanizeSeconds (seconds) {
       return new Date(seconds * 1000).toISOString().substr(11, 8)
@@ -165,5 +188,19 @@ small {
   min-height: 96px;
   min-width: 96px;
   width: 96px;
+}
+
+.batch-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.selected-count {
+  font-weight: 600;
 }
 </style>
