@@ -187,6 +187,12 @@ type ObjectConfig struct {
 			JavrScraper string `default:"javdatabase" json:"javrScraper"`
 		} `json:"javr"`
 	} `json:"scraper_settings"`
+	FileRename struct {
+		Pattern        string `default:"{Site} - {Title} - {Actors} - {Resolution}{VRFormat}{Alpha}.{ext}" json:"pattern"`
+		ActorSeparator string `default:", " json:"actorSeparator"`
+		MaxActors      int    `default:"3" json:"maxActors"`
+		LinuxFriendly  bool   `default:"false" json:"linuxFriendly"`
+	} `json:"fileRename"`
 }
 
 var (

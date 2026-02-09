@@ -7,6 +7,7 @@
           <b-menu-list :label="$t('Options')">
             <b-menu-item :label="$t('Storage')" :active="active==='storage'" @click="setActive('storage')"/>
             <b-menu-item :label="$t('Previews')" :active="active==='previews'" @click="setActive('previews')"/>
+            <b-menu-item :label="$t('File Manager')" :active="active==='file-manager'" @click="setActive('file-manager')"/>
             <!--            <b-menu-item :label="$t('Scheduled tasks')" :active="active==='tasks'" @click="setActive ('tasks')"/>-->
             <b-menu-item :label="$t('Cache')" :active="active==='cache'" @click="setActive('cache')"></b-menu-item>
             <b-menu-item :label="$t('Task Schedules')" :active="active==='schedules'" @click="setActive('schedules')"></b-menu-item>
@@ -35,6 +36,7 @@
           <Storage v-show="active==='storage'"/>
           <Cache v-show="active==='cache'"/>
           <Previews v-show="active==='previews'"/>
+          <FileManager v-show="active==='file-manager'"/>
           <Schedules v-show="active==='schedules'"/>
           <SceneDataScrapers v-show="active==='data-scrapers'"/>
           <SceneCreate v-show="active==='create-scene'"/>
@@ -66,9 +68,10 @@ import Schedules from './sections/Schedules.vue'
 import InterfaceDeoVR from './sections/InterfaceDeoVR.vue'
 import InterfaceAdvanced from './sections/InterfaceAdvanced.vue'
 import SceneMatchParams from './overlays/SceneMatchParams.vue'
+import FileManager from './sections/FileManager.vue'
 
 export default {
-  components: { Storage, SceneDataScrapers, SceneCreate, Funscripts, SceneDataImportExport, InterfaceWeb, InterfaceDLNA, InterfaceDeoVR, Cache, Previews, Schedules, InterfaceAdvanced,SceneMatchParams },
+  components: { Storage, SceneDataScrapers, SceneCreate, Funscripts, SceneDataImportExport, InterfaceWeb, InterfaceDLNA, InterfaceDeoVR, Cache, Previews, Schedules, InterfaceAdvanced, SceneMatchParams, FileManager },
   data: function () {
     return {
       active: 'storage'

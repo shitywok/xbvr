@@ -4,7 +4,7 @@ import (
 	"github.com/xbapps/xbvr/pkg/server"
 )
 
-var version = "CURRENT"
+var version = "0.0.1-file-rename.12"
 var commit = "HEAD"
 var branch = "master"
 var date = "moment ago"

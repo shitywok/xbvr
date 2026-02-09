@@ -224,6 +224,20 @@ type RequestSaveCollectorConfig struct {
 	Other     []scrape.ScrapeHttpKeyValue     `json:"other"`
 }
 
+type RequestSaveFileRenameOptions struct {
+	Pattern        string `json:"pattern"`
+	ActorSeparator string `json:"actorSeparator"`
+	MaxActors      int    `json:"maxActors"`
+	LinuxFriendly  bool   `json:"linuxFriendly"`
+}
+
+type GetFileRenameResponse struct {
+	Pattern        string `json:"pattern"`
+	ActorSeparator string `json:"actorSeparator"`
+	MaxActors      int    `json:"maxActors"`
+	LinuxFriendly  bool   `json:"linuxFriendly"`
+}
+
 type ConfigResource struct{}
 
 func (i ConfigResource) WebService() *restful.WebService {
@@ -336,6 +350,12 @@ func (i ConfigResource) WebService() *restful.WebService {
 	ws.Route(ws.GET("/collector-config-list").To(i.getCollectorConfigs))
 	ws.Route(ws.POST("/save-collector-config").To(i.saveCollectorConfigs))
 	ws.Route(ws.DELETE("/delete-collector-config").To(i.deleteCollectorConfig))
+
+	// "File Rename" section endpoints
+	ws.Route(ws.GET("/file-rename").To(i.getFileRenameOptions).
+		Metadata(restfulspec.KeyOpenAPITags, tags))
+	ws.Route(ws.PUT("/file-rename").To(i.saveFileRenameOptions).
+		Metadata(restfulspec.KeyOpenAPITags, tags))
 
 	return ws
 }
@@ -1219,4 +1239,42 @@ func (i ConfigResource) deleteCollectorConfig(req *restful.Request, resp *restfu
 	var kv models.KV
 	kv.Key = r.DomainKey
 	kv.Delete()
+}
+
+func (i ConfigResource) getFileRenameOptions(req *restful.Request, resp *restful.Response) {
+	var out GetFileRenameResponse
+	out.Pattern = config.Config.FileRename.Pattern
+	out.ActorSeparator = config.Config.FileRename.ActorSeparator
+	out.MaxActors = config.Config.FileRename.MaxActors
+	out.LinuxFriendly = config.Config.FileRename.LinuxFriendly
+
+	// Apply defaults if not set
+	if out.Pattern == "" {
+		out.Pattern = "{Site} - {Title} - {Actors} - {Resolution}{VRFormat}{Alpha}.{ext}"
+	}
+	if out.ActorSeparator == "" {
+		out.ActorSeparator = ", "
+	}
+	if out.MaxActors == 0 {
+		out.MaxActors = 3
+	}
+
+	resp.WriteHeaderAndEntity(http.StatusOK, out)
+}
+
+func (i ConfigResource) saveFileRenameOptions(req *restful.Request, resp *restful.Response) {
+	var r RequestSaveFileRenameOptions
+	err := req.ReadEntity(&r)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	config.Config.FileRename.Pattern = r.Pattern
+	config.Config.FileRename.ActorSeparator = r.ActorSeparator
+	config.Config.FileRename.MaxActors = r.MaxActors
+	config.Config.FileRename.LinuxFriendly = r.LinuxFriendly
+	config.SaveConfig()
+
+	resp.WriteHeaderAndEntity(http.StatusOK, r)
 }
